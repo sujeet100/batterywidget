@@ -19,12 +19,11 @@ import android.os.BatteryManager;
 import android.os.SystemClock;
 import android.widget.RemoteViews;
 
-import com.migapro.battery.R;
-
 
 public class BatteryWidget extends AppWidgetProvider {
 	private static final String ACTION_BATTERY_UPDATE = "com.mavedev.battery.action.UPDATE";
 	private int batteryLevel = 0;
+	private boolean isCharging = false;
 	
 	@Override
 	public void onEnabled(Context context) {
@@ -102,19 +101,25 @@ public class BatteryWidget extends AppWidgetProvider {
 		
 		int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+		int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+		
+		isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL;
+		
 		return level * 100 / scale;
 	}
 	
 	private void updateViews(Context context) {
 		LogFile.log("updateViews()");
 		//TODO: remove
-		batteryLevel = 29;
+		/*batteryLevel = 100;
+		isCharging = false;*/
 		
 		
 		
 		Bitmap bitmap = Bitmap.createBitmap(300, 300, Config.ARGB_8888);
 		
-		final int circleStroke = bitmap.getHeight()/10;
+		final int circleStroke = bitmap.getHeight()/15;
 		final int PADDING = circleStroke+5;
 
 		
@@ -123,12 +128,16 @@ public class BatteryWidget extends AppWidgetProvider {
 		outerCirclePaint.setAntiAlias(true);
 		outerCirclePaint.setStyle(Style.STROKE);
 		outerCirclePaint.setStrokeWidth(circleStroke);
+		
+		//outer circle color based on battery percentage
 		if(batteryLevel >=30){
 			outerCirclePaint.setColor(0xFF79BEDB);
 		}else if(batteryLevel<30 && batteryLevel >=15 ){
 			outerCirclePaint.setColor(0xFFFF9900);
 		}else if(batteryLevel < 15){
 			outerCirclePaint.setColor(0xFFFF0000);
+		}if(isCharging){
+			outerCirclePaint.setColor(Color.YELLOW);
 		}
 		
 		
@@ -145,9 +154,9 @@ public class BatteryWidget extends AppWidgetProvider {
 		textPaint.setAntiAlias(true);
 		textPaint.setStyle(Style.FILL_AND_STROKE);
 		textPaint.setStrokeWidth(5);
-		int textFontSize = bitmap.getHeight()/4;
+		int textFontSize = batteryLevel == 100 ? bitmap.getHeight()/4:bitmap.getHeight()/3;
 		textPaint.setTextSize(textFontSize);
-		textPaint.setColor(0xFF13AAFA);
+		textPaint.setColor(Color.WHITE);
 		
 		Canvas canvas = new Canvas(bitmap);
 		RectF box = new RectF(0+PADDING, 0+PADDING,bitmap.getWidth()-PADDING,bitmap.getHeight()-PADDING);
@@ -166,7 +175,8 @@ public class BatteryWidget extends AppWidgetProvider {
 		canvas.drawPath(outerCircle, outerCirclePaint);
 	
 		//battery level
-		canvas.drawText(batteryLevel + "%",10+PADDING+circleStroke,bitmap.getHeight()/2+textFontSize/2, textPaint);
+		int textX =  15+PADDING + circleStroke;
+		canvas.drawText(batteryLevel + "%",textX,bitmap.getHeight()/2+textFontSize/2, textPaint);
 
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 		//views.setTextViewText(R.id.batteryText, batteryLevel + "%.");
@@ -174,6 +184,10 @@ public class BatteryWidget extends AppWidgetProvider {
 		
 		ComponentName componentName = new ComponentName(context, BatteryWidget.class);
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+		
+		/*Intent configIntent = new Intent(context, BatteryWidgetConfigure.class);
+	    PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+	    views.setOnClickPendingIntent(R.id.canvas, configPendingIntent);*/
 		appWidgetManager.updateAppWidget(componentName, views);
 	}
 
