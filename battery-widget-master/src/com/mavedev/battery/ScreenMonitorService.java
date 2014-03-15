@@ -42,7 +42,7 @@ public class ScreenMonitorService extends Service {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				LogFile.log(intent.getAction());
-				BatteryWidget.turnAlarmOnOff(context, false);
+				//BatteryWidget.turnAlarmOnOff(context, false);
 			}
 			
 		};
@@ -58,8 +58,8 @@ public class ScreenMonitorService extends Service {
 				LogFile.log(intent.getAction());
 				
 				KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-				if (!keyguardManager.inKeyguardRestrictedInputMode())
-					BatteryWidget.turnAlarmOnOff(context, true);
+				//if (!keyguardManager.inKeyguardRestrictedInputMode())
+				//	BatteryWidget.turnAlarmOnOff(context, true);
 			}
 			
 		};
@@ -74,7 +74,7 @@ public class ScreenMonitorService extends Service {
 			public void onReceive(Context context, Intent intent) {
 				LogFile.log(intent.getAction());
 				
-				BatteryWidget.turnAlarmOnOff(context, true);
+			//	BatteryWidget.turnAlarmOnOff(context, true);
 			}
 			
 		};
