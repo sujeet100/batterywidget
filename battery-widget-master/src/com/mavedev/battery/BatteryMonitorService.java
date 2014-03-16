@@ -56,15 +56,10 @@ public class BatteryMonitorService extends Service{
 	
 	private void updateViews(Context context) {
 		LogFile.log("updateViews()");
-		//TODO: remove
-		/*batteryLevel = 100;
-		isCharging = false;*/
-		
-		
 		
 		Bitmap bitmap = Bitmap.createBitmap(300, 300, Config.ARGB_8888);
 		
-		final int circleStroke = bitmap.getHeight()/15;
+		final int circleStroke = bitmap.getHeight()/20;
 		final int PADDING = circleStroke+5;
 
 		
@@ -83,7 +78,7 @@ public class BatteryMonitorService extends Service{
 			outerCirclePaint.setColor(0xFFFF0000);
 		}
 		if(isCharging){
-			outerCirclePaint.setColor(0xFF92CD00	);
+			outerCirclePaint.setColor(0xFF92CD00);
 		}
 		
 		
@@ -91,7 +86,7 @@ public class BatteryMonitorService extends Service{
 		Paint innerCirclePaint = new Paint(); 
 		innerCirclePaint.setAntiAlias(true);
 		innerCirclePaint.setStyle(Style.STROKE);
-		innerCirclePaint.setStrokeWidth(circleStroke/2);
+		innerCirclePaint.setStrokeWidth(circleStroke/3);
 		innerCirclePaint.setColor(0xFFFFFFFF);
 		
 		
@@ -99,7 +94,7 @@ public class BatteryMonitorService extends Service{
 		Paint textPaint = new Paint(); 
 		textPaint.setAntiAlias(true);
 		textPaint.setStyle(Style.FILL_AND_STROKE);
-		textPaint.setStrokeWidth(5);
+		textPaint.setStrokeWidth(bitmap.getHeight()/100);
 		int textFontSize = batteryLevel == 100 ? bitmap.getHeight()/4:bitmap.getHeight()/3;
 		textPaint.setTextSize(textFontSize);
 		textPaint.setColor(Color.WHITE);
@@ -121,7 +116,7 @@ public class BatteryMonitorService extends Service{
 		canvas.drawPath(outerCircle, outerCirclePaint);
 	
 		//battery level
-		int textX =  15+PADDING + circleStroke;
+		int textX =  bitmap.getHeight()/15+PADDING + circleStroke;
 		canvas.drawText(batteryLevel + "%",textX,bitmap.getHeight()/2+textFontSize/2, textPaint);
 
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
