@@ -19,12 +19,13 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/warningLevel"
         android:layout_marginTop="14dp"
-        android:text="critical"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="Show critical warning at"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFF0000" />
 
     <Button
         android:id="@+id/doneButton"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/criticalLevel"
         android:layout_centerHorizontal="true"
@@ -37,8 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="warning"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="Show warning at"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFF9900" />
 
     <TextView
         android:id="@+id/warnPerc"
