@@ -27,7 +27,11 @@
         </receiver>
         
         <service android:name="com.mavedev.battery.BatteryMonitorService"></service>
-        
+        <activity  android:name="com.mavedev.battery.BatteryWidgetConfigure" android:label="@string/config">
+            <intent-filter >
+                	<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

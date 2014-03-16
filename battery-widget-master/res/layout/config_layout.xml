@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <SeekBar
+        android:id="@+id/warningLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="28dp"
+        android:layout_toRightOf="@+id/warningLabel" />
+
+    <TextView
+        android:id="@+id/warningLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/warningLevel"
+        android:text="warning"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/criticalLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/warningLevel"
+        android:layout_marginTop="14dp"
+        android:text="Critical"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <SeekBar
+        android:id="@+id/criticalLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/warningLevel"
+        android:layout_alignTop="@+id/criticalLabel" />
+
+</RelativeLayout>

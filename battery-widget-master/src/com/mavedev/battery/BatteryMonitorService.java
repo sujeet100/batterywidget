@@ -1,5 +1,6 @@
 package com.mavedev.battery;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -82,7 +83,7 @@ public class BatteryMonitorService extends Service{
 			outerCirclePaint.setColor(0xFFFF0000);
 		}
 		if(isCharging){
-			outerCirclePaint.setColor(Color.YELLOW);
+			outerCirclePaint.setColor(Color.GREEN);
 		}
 		
 		
@@ -130,9 +131,9 @@ public class BatteryMonitorService extends Service{
 		ComponentName componentName = new ComponentName(context, BatteryWidget.class);
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		
-		/*Intent configIntent = new Intent(context, BatteryWidgetConfigure.class);
+		Intent configIntent = new Intent(context, BatteryWidgetConfigure.class);
 	    PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
-	    views.setOnClickPendingIntent(R.id.canvas, configPendingIntent);*/
+	    views.setOnClickPendingIntent(R.id.canvas, configPendingIntent);
 		appWidgetManager.updateAppWidget(componentName, views);
 	}
 
