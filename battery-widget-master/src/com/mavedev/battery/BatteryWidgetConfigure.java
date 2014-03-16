@@ -76,8 +76,8 @@ public class BatteryWidgetConfigure extends Activity {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 
-				warnLab.setText(progress + "%");
-				warningLevel = progress;
+				setWarningLevel(progress);
+				
 				if (warningLevel <= criticalLevel) {
 					critSeekBar.setProgress(warningLevel <= 10 ? 5
 							: warningLevel - 10);
@@ -102,13 +102,15 @@ public class BatteryWidgetConfigure extends Activity {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 
-				critLab.setText(progress + "%");
-				criticalLevel = progress;
+				setCriticalLevel(progress);
+				
 				if (warningLevel <= criticalLevel) {
 					warnSeekBar.setProgress(criticalLevel >= 90 ? 95
 							: criticalLevel + 10);
 				}
 			}
+
+			
 		});
 
 		doneButton.setOnClickListener(new OnClickListener() {
@@ -134,6 +136,21 @@ public class BatteryWidgetConfigure extends Activity {
 
 			}
 		});
+	}
+	
+	
+	private void setCriticalLevel(int progress) {
+		progress = progress <=5? 5:progress;
+		progress = progress >=90? 90:progress;
+		critLab.setText(progress + "%");
+		criticalLevel = progress;				
+	}
+
+	private void setWarningLevel(int progress) {
+		progress = progress <=10? 10:progress;
+		progress = progress >=95? 95:progress;
+		warnLab.setText(progress + "%");
+		warningLevel = progress;
 	}
 
 }

@@ -60,9 +60,8 @@ public class BatteryMonitorService extends Service{
 		Bitmap bitmap = Bitmap.createBitmap(300, 300, Config.ARGB_8888);
 		
 		final int circleStroke = bitmap.getHeight()/20;
-		final int PADDING = circleStroke+5;
+		final int PADDING = circleStroke*2;
 
-		
 		//Outer circle style
 		Paint outerCirclePaint = new Paint(); 
 		outerCirclePaint.setAntiAlias(true);
@@ -71,7 +70,7 @@ public class BatteryMonitorService extends Service{
 		
 		//outer circle color based on battery percentage
 		if(batteryLevel >=BatteryWidgetConfigure.warningLevel){
-			outerCirclePaint.setColor(0xFF79BEDB);
+			outerCirclePaint.setColor(0xFF2EA8D9);
 		}else if(batteryLevel<BatteryWidgetConfigure.warningLevel && batteryLevel >=BatteryWidgetConfigure.criticalLevel ){
 			outerCirclePaint.setColor(0xFFFF9900);
 		}else if(batteryLevel < BatteryWidgetConfigure.criticalLevel){
@@ -95,7 +94,7 @@ public class BatteryMonitorService extends Service{
 		textPaint.setAntiAlias(true);
 		textPaint.setStyle(Style.FILL_AND_STROKE);
 		textPaint.setStrokeWidth(bitmap.getHeight()/100);
-		int textFontSize = batteryLevel == 100 ? bitmap.getHeight()/4:bitmap.getHeight()/3;
+		int textFontSize = batteryLevel == 100 ? bitmap.getHeight()/5:bitmap.getHeight()/4;
 		textPaint.setTextSize(textFontSize);
 		textPaint.setColor(Color.WHITE);
 		
@@ -116,11 +115,13 @@ public class BatteryMonitorService extends Service{
 		canvas.drawPath(outerCircle, outerCirclePaint);
 	
 		//battery level
-		int textX =  bitmap.getHeight()/15+PADDING + circleStroke;
+		int textX =  bitmap.getHeight()/15+PADDING + 2*circleStroke;
+		if(batteryLevel<10){
+			textX = (int) (textX * 1.5);
+		}
 		canvas.drawText(batteryLevel + "%",textX,bitmap.getHeight()/2+textFontSize/2, textPaint);
 
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-		//views.setTextViewText(R.id.batteryText, batteryLevel + "%.");
 		views.setImageViewBitmap(R.id.canvas, bitmap);
 		
 		ComponentName componentName = new ComponentName(context, BatteryWidget.class);
