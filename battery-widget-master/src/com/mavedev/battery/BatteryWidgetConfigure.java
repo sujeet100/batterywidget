@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 public class BatteryWidgetConfigure extends Activity {
 	
+	private static final int DEFAULT_WARNING_LEVEL = 30;
+	private static final int DEFAULT_CRITICAL_LEVEL = 15;
+	
 	int widgetId;
 	SeekBar warnSeekBar;
 	SeekBar critSeekBar;
@@ -35,6 +38,10 @@ public class BatteryWidgetConfigure extends Activity {
 		critLab = (TextView) findViewById(R.id.critPerc);
 		doneButton = (Button) findViewById(R.id.doneButton);
 		
+		warnSeekBar.setProgress(DEFAULT_WARNING_LEVEL);
+		critSeekBar.setProgress(DEFAULT_CRITICAL_LEVEL);
+		warnLab.setText(DEFAULT_WARNING_LEVEL+"%");
+		critLab.setText(DEFAULT_CRITICAL_LEVEL+"%");
 		
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
@@ -62,6 +69,10 @@ public class BatteryWidgetConfigure extends Activity {
 
 				warnLab.setText(progress+"%");
 				warningLevel = progress;
+				if(warningLevel <= criticalLevel){
+					critSeekBar.setProgress(warningLevel<=10? 5:warningLevel - 10);
+				}
+				
 			}
 		});
 		
@@ -83,6 +94,9 @@ public class BatteryWidgetConfigure extends Activity {
 
 				critLab.setText(progress+"%");
 				criticalLevel = progress;
+				if(warningLevel <= criticalLevel){
+					warnSeekBar.setProgress(criticalLevel>=90? 95:criticalLevel + 10);
+				}
 			}
 		});
 
