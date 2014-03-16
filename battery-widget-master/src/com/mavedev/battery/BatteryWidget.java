@@ -10,7 +10,10 @@ public class BatteryWidget extends AppWidgetProvider {
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
-		context.startService(new Intent(context, BatteryMonitorService.class));
+		updateView(context, appWidgetManager, appWidgetIds[0]);
 	}
 
+	public static void updateView(Context context, AppWidgetManager manager, int widgetId){
+		context.startService(new Intent(context, BatteryMonitorService.class));
+	}
 }

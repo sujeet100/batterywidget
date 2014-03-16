@@ -7,18 +7,10 @@
         android:id="@+id/warningLevel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="28dp"
-        android:layout_toRightOf="@+id/warningLabel" />
-
-    <TextView
-        android:id="@+id/warningLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/warningLevel"
-        android:text="warning"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_toLeftOf="@+id/warnPerc" />
 
     <TextView
         android:id="@+id/criticalLabel"
@@ -27,14 +19,47 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/warningLevel"
         android:layout_marginTop="14dp"
-        android:text="Critical"
+        android:text="critical"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/doneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/criticalLevel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="137dp"
+        android:text="Done" />
+
+    <TextView
+        android:id="@+id/warningLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="warning"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/warnPerc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/warningLevel" />
 
     <SeekBar
         android:id="@+id/criticalLevel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/warningLevel"
-        android:layout_alignTop="@+id/criticalLabel" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/criticalLabel"
+        android:layout_toLeftOf="@+id/critPerc" />
+
+    <TextView
+        android:id="@+id/critPerc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/criticalLevel"
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

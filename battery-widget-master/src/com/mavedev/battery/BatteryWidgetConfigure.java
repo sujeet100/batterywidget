@@ -6,16 +6,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.RemoteViews;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 public class BatteryWidgetConfigure extends Activity {
 	
 	int widgetId;
-
+	SeekBar warnSeekBar;
+	SeekBar critSeekBar;
+	TextView warnLab;
+	TextView critLab;
+	Button doneButton;
+	
+	public static int criticalLevel;
+	public static int warningLevel;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.config_layout);
+		warnSeekBar = (SeekBar) findViewById(R.id.warningLevel);
+		critSeekBar = (SeekBar) findViewById(R.id.criticalLevel);
+		warnLab = (TextView) findViewById(R.id.warnPerc);
+		critLab = (TextView) findViewById(R.id.critPerc);
+		doneButton = (Button) findViewById(R.id.doneButton);
+		
 		
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
@@ -25,26 +44,71 @@ public class BatteryWidgetConfigure extends Activity {
 		            AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 		
+		warnSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+
+				warnLab.setText(progress+"%");
+				warningLevel = progress;
+			}
+		});
+		
+		critSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+
+				critLab.setText(progress+"%");
+				criticalLevel = progress;
+			}
+		});
+
+		
+		
+		doneButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				final Context context = BatteryWidgetConfigure.this;
+
+	            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+	            RemoteViews views = new RemoteViews(context.getPackageName(),
+	            		R.layout.widget_layout);
+	            
+	            appWidgetManager.updateAppWidget(widgetId, views);
+
+	            Intent resultValue = new Intent();
+	            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+	            setResult(RESULT_OK, resultValue);
+	            BatteryWidget.updateView(context, appWidgetManager, widgetId);
+	            
+	            finish();
+				
+			}
+		});
 	}
 	
-
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final Context context = BatteryWidgetConfigure.this;
-
-            // Push widget update to surface with newly set prefix
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            RemoteViews views = new RemoteViews(context.getPackageName(),
-            		R.layout.widget_layout);
-            appWidgetManager.updateAppWidget(widgetId, views);
-            /*BatteryWidget.updateAppWidget(context, appWidgetManager,
-                    widgetId);
-*/
-            // Make sure we pass back the original appWidgetId
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
-        }
-    };
 }

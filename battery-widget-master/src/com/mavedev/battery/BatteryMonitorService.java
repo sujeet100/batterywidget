@@ -75,15 +75,15 @@ public class BatteryMonitorService extends Service{
 		outerCirclePaint.setStrokeWidth(circleStroke);
 		
 		//outer circle color based on battery percentage
-		if(batteryLevel >=30){
+		if(batteryLevel >=BatteryWidgetConfigure.warningLevel){
 			outerCirclePaint.setColor(0xFF79BEDB);
-		}else if(batteryLevel<30 && batteryLevel >=15 ){
+		}else if(batteryLevel<BatteryWidgetConfigure.warningLevel && batteryLevel >=BatteryWidgetConfigure.criticalLevel ){
 			outerCirclePaint.setColor(0xFFFF9900);
-		}else if(batteryLevel < 15){
+		}else if(batteryLevel < BatteryWidgetConfigure.criticalLevel){
 			outerCirclePaint.setColor(0xFFFF0000);
 		}
 		if(isCharging){
-			outerCirclePaint.setColor(Color.GREEN);
+			outerCirclePaint.setColor(0xFF92CD00	);
 		}
 		
 		
