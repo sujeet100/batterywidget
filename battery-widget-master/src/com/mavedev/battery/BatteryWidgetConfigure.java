@@ -13,6 +13,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.searchboxsdk.android.StartAppSearch;
+import com.startapp.android.publish.StartAppAd;
+
 public class BatteryWidgetConfigure extends Activity {
 
 	private static final int DEFAULT_WARNING_LEVEL = 30;
@@ -30,7 +33,12 @@ public class BatteryWidgetConfigure extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		StartAppAd.init(this, Integer.toString(R.string.developerId), Integer.toString(R.string.appId));
+		StartAppSearch.init(this, Integer.toString(R.string.developerId), Integer.toString(R.string.appId));
+		
 		super.onCreate(savedInstanceState);
+		StartAppSearch.showSearchBox(this);
+		
 		setContentView(R.layout.config_layout);
 		warnSeekBar = (SeekBar) findViewById(R.id.warningLevel);
 		critSeekBar = (SeekBar) findViewById(R.id.criticalLevel);

@@ -6,30 +6,56 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-    
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BATTERY_STATS"></uses-permission>
+    <uses-permission android:name="android.permission.BATTERY_STATS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	//These permissions are only required for showing the ad when pressing the Home button:
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/circle_battery_icon"
         android:label="@string/app_name" >
-        
+        <activity
+            android:name="com.startapp.android.eula.EULAActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name="com.startapp.android.publish.list3d.List3DActivity"
+            android:taskAffinity="com.mavedev.battery.AppWall"
+            android:theme="@android:style/Theme" />
+        <activity
+            android:name="com.startapp.android.publish.AppWallActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:taskAffinity="com.mavedev.battery.AppWall"
+            android:theme="@android:style/Theme.Translucent" />
+
         <receiver
             android:name="com.mavedev.battery.BatteryWidget"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
-        
-        <service android:name="com.mavedev.battery.BatteryMonitorService"></service>
-        <activity  android:name="com.mavedev.battery.BatteryWidgetConfigure" android:label="@string/config">
-            <intent-filter >
-                	<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+
+        <service android:name="com.mavedev.battery.BatteryMonitorService" >
+        </service>
+
+        <activity
+            android:name="com.mavedev.battery.BatteryWidgetConfigure"
+            android:label="@string/config" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
     </application>

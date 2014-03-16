@@ -2,5 +2,6 @@
 
     <string name="app_name">Battery Widget</string>
     <string name="config">Configuration</string>
-
+    <string name="developerId">103324128</string>
+	<string name="appId">203116552</string>
 </resources>
