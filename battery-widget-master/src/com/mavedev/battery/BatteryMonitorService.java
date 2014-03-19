@@ -1,5 +1,8 @@
 package com.mavedev.battery;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import junit.framework.Assert;
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -18,10 +21,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 import android.os.IBinder;
 import android.widget.RemoteViews;
@@ -29,15 +30,23 @@ import android.widget.RemoteViews;
 @SuppressLint("NewApi")
 public class BatteryMonitorService extends Service {
 
-	private static final String ACTION_BATTERY_UPDATE = "com.mavedev.battery.action.UPDATE";
 	private int batteryLevel = 0;
 	private boolean isCharging = false;
-
+	private int chargePlug;
+	private long timeForOnePercentBatteryLevelChangeInSeconds;
+	private Date batteryStateTime;
+	
 	BroadcastReceiver batteryLevelReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int currentLevel = calculateBatteryLevel(context);
+
+			if(batteryStateTime == null){
+				batteryStateTime = getDefaultStateTime();
+			}
 			batteryLevel = currentLevel;
+			timeForOnePercentBatteryLevelChangeInSeconds = (new Date().getTime() - batteryStateTime.getTime())/(1000);
+			batteryStateTime = new Date();
 			updateViews(context);
 
 		}
@@ -52,11 +61,20 @@ public class BatteryMonitorService extends Service {
 		int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 		int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-
 		isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
 				|| status == BatteryManager.BATTERY_STATUS_FULL;
 
+		if(isCharging){
+			chargePlug = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+		}
 		return level * 100 / scale;
+	}
+
+	private Date getDefaultStateTime() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, isCharging ? -1:-5);
+		Date date = calendar.getTime();
+		return date;
 	}
 
 	private void updateViews(Context context) {
@@ -147,10 +165,13 @@ public class BatteryMonitorService extends Service {
 		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
 		// Instantiate a Builder object.
 		Notification.Builder builder = new Notification.Builder(this);
-		builder.setContentTitle("Picture Download")
-				.setContentText("Download in progress")
+		
+		
+		builder.setContentTitle(getBatteryRemainingText())
+				.setContentText(getChargingText())
 				.setSmallIcon(batteryImageId)
-				.setLargeIcon(scaledBitmap);
+				.setLargeIcon(scaledBitmap)
+				.setOngoing(true);
 		
 		
 		
@@ -174,6 +195,16 @@ public class BatteryMonitorService extends Service {
 		// Builds an anonymous Notification object from the builder, and
 		// passes it to the NotificationManager
 		mNotificationManager.notify(0, builder.build());
+	}
+
+	private String getChargingText() {
+		if(chargePlug == BatteryManager.BATTERY_PLUGGED_AC){
+			return "Charging - AC";
+		}else if(chargePlug == BatteryManager.BATTERY_PLUGGED_USB){
+			return "Charging - USB";
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -217,4 +248,13 @@ public class BatteryMonitorService extends Service {
 				context.getPackageName());
 	}
 
+	private String getBatteryRemainingText(){
+		if(isCharging){
+			long timeTakenToCharge =  (timeForOnePercentBatteryLevelChangeInSeconds * (100-batteryLevel));
+			return "Full in "+timeTakenToCharge/60+" minutes";
+		}else{
+			long timeTakenToDischarge =  (timeForOnePercentBatteryLevelChangeInSeconds * batteryLevel);
+			return "Empty in "+timeTakenToDischarge/60+" minutes";
+		}
+	}
 }
