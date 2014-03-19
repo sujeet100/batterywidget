@@ -1,5 +1,8 @@
 package com.mavedev.battery;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -20,6 +23,7 @@ import android.os.BatteryManager;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 
+@SuppressLint("NewApi")
 public class BatteryMonitorService extends Service{
 
 	private static final String ACTION_BATTERY_UPDATE = "com.mavedev.battery.action.UPDATE";
@@ -29,9 +33,6 @@ public class BatteryMonitorService extends Service{
 	BroadcastReceiver batteryLevelReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			LogFile.log("onReceive() " + intent.getAction());
-			System.out.println("intent recieved: "+intent.getAction());
-				System.out.println("battery changed");
 				int currentLevel = calculateBatteryLevel(context);
 					batteryLevel = currentLevel;
 					updateViews(context);
@@ -40,7 +41,6 @@ public class BatteryMonitorService extends Service{
 	};
 	
 	private int calculateBatteryLevel(Context context) {
-		LogFile.log("calculateBatteryLevel()");
 		
 		Intent batteryIntent = context.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		
@@ -55,10 +55,8 @@ public class BatteryMonitorService extends Service{
 	}
 	
 	private void updateViews(Context context) {
-		LogFile.log("updateViews()");
 		
 		Bitmap bitmap = Bitmap.createBitmap(300, 300, Config.ARGB_8888);
-		
 		final int circleStroke = bitmap.getHeight()/20;
 		final int PADDING = circleStroke*2;
 
@@ -131,8 +129,43 @@ public class BatteryMonitorService extends Service{
 	    PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
 	    views.setOnClickPendingIntent(R.id.canvas, configPendingIntent);
 		appWidgetManager.updateAppWidget(componentName, views);
+		
+		updateNotification(views);
 	}
 
+
+	private void updateNotification(RemoteViews views) {
+
+		// Instantiate a Builder object.
+		Notification.Builder builder = new Notification.Builder(this);
+		builder.setContentTitle("Picture Download")
+	    .setContentText("Download in progress")
+	    .setSmallIcon(R.drawable.circle_battery_icon)
+	    .setContent(views);
+		// Creates an Intent for the Activity
+	/*	Intent notifyIntent =
+		        new Intent(new ComponentName(this, ResultActivity.class));
+	*/	// Sets the Activity to start in a new, empty task
+	/*	notifyIntent.setFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK);
+		// Creates the PendingIntent
+		PendingIntent notifyIntent =
+		        PendingIntent.getActivity(
+		        this,
+		        0,
+		        notifyIntent
+		        PendingIntent.FLAG_UPDATE_CURRENT
+		);
+*/
+		// Puts the PendingIntent into the notification builder
+//		builder.setContentIntent(notifyIntent);
+		// Notifications are issued by sending them to the
+		// NotificationManager system service.
+		NotificationManager mNotificationManager =
+		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		// Builds an anonymous Notification object from the builder, and
+		// passes it to the NotificationManager
+		mNotificationManager.notify(0, builder.build());
+	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
