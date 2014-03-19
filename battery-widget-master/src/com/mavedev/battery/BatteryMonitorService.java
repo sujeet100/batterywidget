@@ -18,8 +18,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 import android.os.IBinder;
 import android.widget.RemoteViews;
@@ -137,17 +139,22 @@ public class BatteryMonitorService extends Service {
 		views.setOnClickPendingIntent(R.id.canvas, configPendingIntent);
 		appWidgetManager.updateAppWidget(componentName, views);
 
-		updateNotification(views, batteryLevel);
+		updateNotification(bitmap);
 	}
 
-	private void updateNotification(RemoteViews views, int batteryLevel) {
-
+	private void updateNotification(Bitmap bitmap) {
+		int batteryImageId = getDrawable(this, "white_round_"+batteryLevel);
+		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
 		// Instantiate a Builder object.
 		Notification.Builder builder = new Notification.Builder(this);
 		builder.setContentTitle("Picture Download")
 				.setContentText("Download in progress")
-				.setSmallIcon(getDrawable(this, "white_round_"+batteryLevel))
-				.setContent(views);
+				.setSmallIcon(batteryImageId)
+				.setLargeIcon(scaledBitmap);
+		
+		
+		
+		
 		// Creates an Intent for the Activity
 		/*
 		 * Intent notifyIntent = new Intent(new ComponentName(this,
