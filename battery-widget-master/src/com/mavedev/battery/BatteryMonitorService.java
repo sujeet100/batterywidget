@@ -57,7 +57,6 @@ public class BatteryMonitorService extends Service {
 				}
 				dischargingDelta = DEFAULT_DISCHARGING_DELTA;
 			}else{
-				System.out.println(currentLevel);
 				if(currentLevel > batteryLevel){
 					chargingDelta = (new Date().getTime() - batteryStateTime.getTime())/(1000);
 				}else if(currentLevel < batteryLevel){
@@ -94,10 +93,8 @@ public class BatteryMonitorService extends Service {
 
 	private boolean isChargingStateChanged(){
 		if(previousChargingState == isCharging){
-			System.out.println("state same");
 			return false;
 		}else{
-			System.out.println("state changed");
 			return true;
 		}
 	}
