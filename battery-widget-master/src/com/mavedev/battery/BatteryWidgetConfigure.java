@@ -33,8 +33,8 @@ public class BatteryWidgetConfigure extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		StartAppAd.init(this, Integer.toString(R.string.developerId), Integer.toString(R.string.appId));
-		StartAppSearch.init(this, Integer.toString(R.string.developerId), Integer.toString(R.string.appId));
+		StartAppAd.init(this, "103324128","203546682");
+		StartAppSearch.init(this, "103324128","203546682");
 		
 		super.onCreate(savedInstanceState);
 		StartAppSearch.showSearchBox(this);
