@@ -1,6 +1,5 @@
 package com.mavedev.battery;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -30,26 +29,42 @@ import android.widget.RemoteViews;
 @SuppressLint("NewApi")
 public class BatteryMonitorService extends Service {
 
-	private int batteryLevel = 0;
-	private boolean isCharging = false;
+	private static final boolean CHARGING = true;
+	private static final boolean DISCHARGING = false;
+	protected static final long DEFAULT_CHARGING_DELTA = 1*60;
+	protected static final long DEFAULT_DISCHARGING_DELTA = 5*60;
+	
+	private Integer batteryLevel = 0;
+	private boolean isCharging = DISCHARGING;
+	private boolean previousChargingState = DISCHARGING;
 	private int chargePlug;
-	private long timeForOnePercentBatteryLevelChangeInSeconds;
+	private long chargingDelta = DEFAULT_CHARGING_DELTA;
+	private long dischargingDelta = DEFAULT_DISCHARGING_DELTA;
 	private Date batteryStateTime;
 	
 	BroadcastReceiver batteryLevelReceiver = new BroadcastReceiver() {
+
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int currentLevel = calculateBatteryLevel(context);
-
-			if(batteryStateTime == null){
-				batteryStateTime = getDefaultStateTime();
+			if(isChargingStateChanged() || batteryStateTime == null){
+				chargingDelta = DEFAULT_CHARGING_DELTA;
+				dischargingDelta = DEFAULT_DISCHARGING_DELTA;
+			}else{
+				System.out.println(currentLevel);
+				if(currentLevel > batteryLevel){
+					chargingDelta = (new Date().getTime() - batteryStateTime.getTime())/(1000);
+				}else if(currentLevel < batteryLevel){
+					dischargingDelta = (new Date().getTime() - batteryStateTime.getTime())/(1000);
+				}
 			}
-			batteryLevel = currentLevel;
-			timeForOnePercentBatteryLevelChangeInSeconds = (new Date().getTime() - batteryStateTime.getTime())/(1000);
 			batteryStateTime = new Date();
+			batteryLevel = currentLevel;
 			updateViews(context);
 
 		}
+
 	};
 
 	private int calculateBatteryLevel(Context context) {
@@ -61,6 +76,8 @@ public class BatteryMonitorService extends Service {
 		int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 		int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+		
+		previousChargingState = isCharging;
 		isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
 				|| status == BatteryManager.BATTERY_STATUS_FULL;
 
@@ -70,11 +87,14 @@ public class BatteryMonitorService extends Service {
 		return level * 100 / scale;
 	}
 
-	private Date getDefaultStateTime() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MINUTE, isCharging ? -1:-5);
-		Date date = calendar.getTime();
-		return date;
+	private boolean isChargingStateChanged(){
+		if(previousChargingState == isCharging){
+			System.out.println("state same");
+			return false;
+		}else{
+			System.out.println("state changed");
+			return true;
+		}
 	}
 
 	private void updateViews(Context context) {
@@ -198,13 +218,16 @@ public class BatteryMonitorService extends Service {
 	}
 
 	private String getChargingText() {
-		if(chargePlug == BatteryManager.BATTERY_PLUGGED_AC){
+		if(isCharging && chargePlug == BatteryManager.BATTERY_PLUGGED_AC){
 			return "Charging - AC";
-		}else if(chargePlug == BatteryManager.BATTERY_PLUGGED_USB){
+		}else if(isCharging && chargePlug == BatteryManager.BATTERY_PLUGGED_USB){
 			return "Charging - USB";
+		}else if(!isCharging){
+			return "Not Charging";
+		}else{
+			return "Charging";
 		}
 		
-		return null;
 	}
 
 	@Override
@@ -250,11 +273,14 @@ public class BatteryMonitorService extends Service {
 
 	private String getBatteryRemainingText(){
 		if(isCharging){
-			long timeTakenToCharge =  (timeForOnePercentBatteryLevelChangeInSeconds * (100-batteryLevel));
-			return "Full in "+timeTakenToCharge/60+" minutes";
+			int timeTakenToCharge =  (int) (chargingDelta * (100-batteryLevel));
+			return "Battery Full in "+Utils.getHoursAndMinutes(timeTakenToCharge);
 		}else{
-			long timeTakenToDischarge =  (timeForOnePercentBatteryLevelChangeInSeconds * batteryLevel);
-			return "Empty in "+timeTakenToDischarge/60+" minutes";
+			int timeTakenToDischarge =  (int) (dischargingDelta * batteryLevel);
+			return "Battery empty in "+ Utils.getHoursAndMinutes(timeTakenToDischarge);
 		}
 	}
+	
+	
+	
 }
