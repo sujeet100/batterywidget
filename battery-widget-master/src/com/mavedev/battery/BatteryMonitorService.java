@@ -202,23 +202,20 @@ public class BatteryMonitorService extends Service {
 		
 		
 		// Creates an Intent for the Activity
-		/*
-		 * Intent notifyIntent = new Intent(new ComponentName(this,
-		 * ResultActivity.class));
-		 */// Sets the Activity to start in a new, empty task
-		/*
-		 * notifyIntent.setFlags(FLAG_ACTIVITY_NEW_TASK |
-		 * FLAG_ACTIVITY_CLEAR_TASK); // Creates the PendingIntent PendingIntent
-		 * notifyIntent = PendingIntent.getActivity( this, 0, notifyIntent
-		 * PendingIntent.FLAG_UPDATE_CURRENT );
-		 */
-		// Puts the PendingIntent into the notification builder
-		// builder.setContentIntent(notifyIntent);
-		// Notifications are issued by sending them to the
-		// NotificationManager system service.
+		
+		Intent intentBatteryUsage = new Intent(Intent.ACTION_POWER_USAGE_SUMMARY);        
+	    //startActivity(intentBatteryUsage);// Sets the Activity to start in a new, empty task
+		
+	    PendingIntent resultPendingIntent =
+	        PendingIntent.getActivity(
+	        this,
+	        0,
+	        intentBatteryUsage,
+	        PendingIntent.FLAG_UPDATE_CURRENT
+	    );
+	    
+	    builder.setContentIntent(resultPendingIntent);
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		// Builds an anonymous Notification object from the builder, and
-		// passes it to the NotificationManager
 		mNotificationManager.notify(0, builder.build());
 	}
 
