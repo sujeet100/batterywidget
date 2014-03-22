@@ -33,6 +33,7 @@ public class BatteryMonitorService extends Service {
 	private static final boolean DISCHARGING = false;
 	protected static final long DEFAULT_CHARGING_DELTA = 1*60;
 	protected static final long DEFAULT_DISCHARGING_DELTA = 5*60;
+	protected static final long DEFAULT_USB_CHARGING_DELTA = 4*60;
 	
 	private Integer batteryLevel = 0;
 	private boolean isCharging = DISCHARGING;
@@ -49,7 +50,11 @@ public class BatteryMonitorService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			int currentLevel = calculateBatteryLevel(context);
 			if(isChargingStateChanged() || batteryStateTime == null){
-				chargingDelta = DEFAULT_CHARGING_DELTA;
+				if(chargePlug == BatteryManager.BATTERY_PLUGGED_AC){
+					chargingDelta = DEFAULT_CHARGING_DELTA;
+				}else{
+					chargingDelta = DEFAULT_USB_CHARGING_DELTA;
+				}
 				dischargingDelta = DEFAULT_DISCHARGING_DELTA;
 			}else{
 				System.out.println(currentLevel);
