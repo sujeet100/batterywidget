@@ -3,8 +3,6 @@ package com.mavedev.battery;
 import java.util.Date;
 
 import junit.framework.Assert;
-import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -24,9 +22,9 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.BatteryManager;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
-@SuppressLint("NewApi")
 public class BatteryMonitorService extends Service {
 
 	private static final boolean CHARGING = true;
@@ -186,7 +184,7 @@ public class BatteryMonitorService extends Service {
 		int batteryImageId = getDrawable(this, "white_round_"+batteryLevel);
 		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
 		// Instantiate a Builder object.
-		Notification.Builder builder = new Notification.Builder(this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		
 		
 		builder.setContentTitle(getBatteryRemainingText())
